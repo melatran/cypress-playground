@@ -41,6 +41,3 @@
 - tags
 - same level elements are sibblings 
 - class attribute can have several values and each value is sepearted by space
-
-### What is a Locator
-- 

@@ -32,3 +32,19 @@ it('Hello world 1', () => {
     //find by data-cy attribute (best practice to add this attribute to the element you want to interact with)
     cy.get('[data-cy="inputEmail1"]') //will not always be present
 })
+
+it.only('Cypress Locator Methods', () => {
+    //Theory
+    //get() - find element in the page
+    //find() - find element within another element (find only child elements)
+    //contains() - find the first element with specific text; case sensitive
+    //get() - find all elements
+
+    cy.contains('Sign in') //will find the first element with this text
+    cy.contains('Sign In', { matchCase: false }) //will find the first element with this text; case insensitive
+    cy.contains('Emai')
+    cy.contains('[status="warning"]', 'Sign in') //will find the first element with this text and this attribute value
+    cy.contains('nb-card', 'Horizontal form').find('button') //will find the first element with this text and then find the button within that element
+    cy.contains('nb-card', 'Horizontal form').contains('Sign in') //will find the first element with this text within the element with this text and click it
+    cy.contains('nb-card', 'Horizontal form').get('button') //will find all buttons within the element with this text
+})
