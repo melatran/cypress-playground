@@ -33,3 +33,14 @@
 
 ### Test Structure
 - initalize cypress `/// <reference types="cypress" />`
+
+## DOM
+- id are unique (attribute)
+- class are also attributes
+- parent and children elements (nested within the parent)
+- tags
+- same level elements are sibblings 
+- class attribute can have several values and each value is sepearted by space
+
+### What is a Locator
+- 
