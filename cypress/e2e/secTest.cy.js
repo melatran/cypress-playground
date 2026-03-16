@@ -34,7 +34,6 @@ it('Hello world 1', () => {
 })
 
 it('Cypress Locator Methods', () => {
-    //Theory
     //get() - find element in the page
     //find() - find element within another element (find only child elements)
     //contains() - find the first element with specific text; case sensitive
@@ -49,7 +48,7 @@ it('Cypress Locator Methods', () => {
     cy.contains('nb-card', 'Horizontal form').get('button') //will find all buttons within the element with this text
 })
 
-it.only('Child Elements', () => {
+it('Child Elements', () => {
 
     cy.contains('nb-card', 'Using the Grid').find('.row').find('button')
 
@@ -71,4 +70,22 @@ it.only('Child Elements', () => {
     
     cy.get('[placeholder="Jane Doe"]')
     //since there is only one element with this placeholder, we don't need to add the parent element to make it unique
+})
+
+it.only('Parent Elements', () => {
+    //travel up to the nearest parent element
+    //in this example, the Sign In button is located in the Form parent element
+
+    cy.get('#inputEmail1').parents('form').find('button')
+
+    cy.contains('Using the Grid').parent().find('button')
+    //same as cy.contains('nb-card', 'Using the Grid').find('.row').find('button')
+
+    //cy.get('#inputEmail1').parentsUntil('form').find('button')
+    //this errors out because there are multiple parent elements and the button is not within all of them, so it cannot find the button within all of the parent elements
+
+    //to fix
+    cy.get('#inputEmail1').parentsUntil('nb-card-body').find('button')
+    //will find all parent elements until it reaches the form element and then find the button within those parent elements
+
 })
