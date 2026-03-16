@@ -237,7 +237,7 @@ it.only('Assertions and Retry', () => {
        expect(label).to.have.text('Email address') //this will not retry if it fails since it is not a cypress assertion, so it will fail the test immediately if the assertion fails
     })
 
-    cy.get('#exampleInputEmail1').invoke('text').then (emailLabel => {
+    cy.get('[for="exampleInputEmail1"]').invoke('text').then (emailLabel => {
         expect(emailLabel).to.equal('Email address')
         cy.wrap(emailLabel).should('equal', 'Email address')
     })
