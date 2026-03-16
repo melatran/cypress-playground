@@ -222,7 +222,7 @@ it('Extracting Values from Page', () => {
 
 })
 
-it.only('Assertions and Retry', () => {
+it('Assertions and Retry', () => {
 
     cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address')
 
@@ -241,5 +241,9 @@ it.only('Assertions and Retry', () => {
         expect(emailLabel).to.equal('Email address')
         cy.wrap(emailLabel).should('equal', 'Email address')
     })
+
+    //cypress will try until timeout
+    //you don't need to assert everything
+    //.get(), .contains() will automatically assume user can interact with element
 
 })
