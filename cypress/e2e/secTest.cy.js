@@ -72,7 +72,7 @@ it('Child Elements', () => {
     //since there is only one element with this placeholder, we don't need to add the parent element to make it unique
 })
 
-it.only('Parent Elements', () => {
+it('Parent Elements', () => {
     //travel up to the nearest parent element
     //in this example, the Sign In button is located in the Form parent element
 
@@ -87,5 +87,36 @@ it.only('Parent Elements', () => {
     //to fix
     cy.get('#inputEmail1').parentsUntil('nb-card-body').find('button')
     //will find all parent elements until it reaches the form element and then find the button within those parent elements
+
+})
+
+it.only('Cypress Command Chains', () => {
+    //cy.get waits for results then returns the result and moves on to the next command
+    //if command fails, it will retry the command until it finds the element or times out
+
+    cy.get('#inputEmail1')
+        .parents('form')
+        .find('button')
+        .click()
+        .parents('form')
+        .find('nb-radio')
+        .first()
+        .should('have.text', 'Option 1')
+
+    //not recommended to continue chaining commands after an assertion since it can lead to flaky tests if the assertion fails and the next command is not executed
+    //if you click and you navigate to a different page - cypress will lose connection to the dom
+    //once you have action command, break the chain
+
+    cy.get('#inputEmail1')
+        .parents('form')
+        .find('button')
+        .click()
+
+    cy.get('#inputEmail1')
+        .parents('form')
+        .find('nb-radio')
+        .first()
+        .should('have.text', 'Option 2')
+
 
 })
