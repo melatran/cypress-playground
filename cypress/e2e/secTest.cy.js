@@ -247,3 +247,18 @@ it('Assertions and Retry', () => {
     //.get(), .contains() will automatically assume user can interact with element
 
 })
+
+it('Timeouts', () => {
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Dialog').click()
+
+    cy.contains('Open with delay 10 seconds').click()
+    //cy.get('nb-dialog-container nb-card-header').should('have.text', 'Friendly reminder')
+
+    //cypress has a Timed out retrying after 4000ms: 
+    //manually change Timeout in cypress.config.js to 11000ms to allow enough time for the element to appear before timing out
+
+    //if you don't want to make changes to the cypress.config.js file, you can also add a timeout option to the command itself like this:
+    cy.get('nb-dialog-container nb-card-header', { timeout: 11000 })
+        .should('have.text', 'Friendly reminder') //dont't add timeout: 11000 }) to assertion
+})

@@ -12,5 +12,6 @@ module.exports = defineConfig({
   // When you want values to change from the default values, you can override them here.
   viewportWidth: 1280,
   viewportHeight: 720,
+  //defaultCommandTimeout: 11000 //wait 11 seconds before timing out a command
 });
 
