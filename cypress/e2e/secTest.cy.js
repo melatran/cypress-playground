@@ -185,7 +185,7 @@ it('Reusing Locators', () => {
 
 })
 
-it.only('Extracting Values from Page', () => {
+it('Extracting Values from Page', () => {
 
     //Using JQuery metho
     cy.get('[for="exampleInputEmail1"]').then(label => {
@@ -218,6 +218,28 @@ it.only('Extracting Values from Page', () => {
     cy.get('#exampleInputEmail1').invoke('prop', 'value').then(inputValue => {
         //To find prop, in the console, look for Properties and find the value property to get the current value of the input field (can be read only or read/write)
         console.log(inputValue)
+    })
+
+})
+
+it.only('Assertions and Retry', () => {
+
+    cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address')
+
+    cy.get('[for="exampleInputEmail1"]').then(label => {
+       expect(label).to.contain('Email address') //this will not retry if it fails since it is not a cypress assertion, so it will fail the test immediately if the assertion fails
+    })
+
+    //if you want exact match
+    cy.get('[for="exampleInputEmail1"]').should('have.text', 'Email address')
+
+    cy.get('[for="exampleInputEmail1"]').then(label => {
+       expect(label).to.have.text('Email address') //this will not retry if it fails since it is not a cypress assertion, so it will fail the test immediately if the assertion fails
+    })
+
+    cy.get('#exampleInputEmail1').invoke('text').then (emailLabel => {
+        expect(emailLabel).to.equal('Email address')
+        cy.wrap(emailLabel).should('equal', 'Email address')
     })
 
 })
