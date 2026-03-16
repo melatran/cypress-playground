@@ -90,7 +90,7 @@ it('Parent Elements', () => {
 
 })
 
-it.only('Cypress Command Chains', () => {
+it('Cypress Command Chains', () => {
     //cy.get waits for results then returns the result and moves on to the next command
     //if command fails, it will retry the command until it finds the element or times out
 
@@ -118,5 +118,69 @@ it.only('Cypress Command Chains', () => {
         .first()
         .should('have.text', 'Option 2')
 
+})
+
+it.only('Reusing Locators', () => {
+    //when you have a locator that you want to reuse, you can use the .as() command to give it an alias and then use the alias to reference the locator in other commands
+
+    // const inputEmail = cy.get('#inputEmail1')
+    // inputEmail.parents('form').find('button')
+
+    //This will not work ^ because inputEmail is not a cypress command
+
+    //Cypress Alias
+    cy.get('#inputEmail1').as('inputEmail') //give the locator an alias
+    //variable becomes global and can be used in other commands
+    
+    cy.get('@inputEmail').parents('form').find('button') //how to use alias
+    cy.get('@inputEmail').parents('form').find('nb-radio')
+
+    //Cypress then() method
+    cy.get('#inputEmail1').then(inputEmail => {
+        //inputEmail.parents('form').find('button') //this will not work because inputEmail is a jQuery element, not a cypress command
+
+        cy.wrap(inputEmail).parents('form').find('button') //wrap the jQuery element in a cypress command to use cypress commands on it
+        cy.wrap(inputEmail).parents('form').find('nb-radio')
+        cy.wrap('Hello').should('equal', 'Hello') //can also wrap a string in a cypress command to use cypress commands on it
+    })
+
+    //cy.wrap can be used to wrap any object in a cypress command, not just jQuery elements, and it can be used to create custom commands that can be reused throughout your tests
+    //cannot use return statement in then() method since it is asynchronous and will not return the value to the next command, so you need to use cy.wrap to wrap the value in a cypress command to use it in the next command
+
+    // let foo
+    //  cy.get('#inputEmail1').then(inputEmail => {
+    //     cy.wrap(inputEmail).parents('form').find('button') 
+    //     cy.wrap(inputEmail).parents('form').find('nb-radio')
+    //     cy.wrap('Hello').should('equal', 'Hello')
+    //     foo = inputEmail
+    //     return
+    // })
+
+    // let foo
+    //  cy.get('#inputEmail1').then(inputEmail => {
+    //     cy.wrap(inputEmail).parents('form').find('button') 
+    //     cy.wrap(inputEmail).parents('form').find('nb-radio')
+    //     cy.wrap('Hello').should('equal', 'Hello')
+    //     return inputEmail
+    // })
+
+     cy.get('#inputEmail1').then(inputEmail => {
+        cy.wrap(inputEmail).parents('form').find('button') 
+        cy.wrap(inputEmail).parents('form').find('nb-radio')
+        cy.wrap('Hello').should('equal', 'Hello').then(hello => {
+            return hello
+        })
+    }).should('equal', 'Hello')
+
+    //however this is confusing and wordy ^
+
+    cy.get('#inputEmail1').then(inputEmail => {
+        cy.wrap(inputEmail).parents('form').find('button') 
+        cy.wrap(inputEmail).parents('form').find('nb-radio')
+        cy.wrap('Hello').should('equal', 'Hello')
+        cy.wrap(inputEmail).as('inputEmail2')
+    })
+
+    cy.get('@inputEmail2').click()
 
 })
