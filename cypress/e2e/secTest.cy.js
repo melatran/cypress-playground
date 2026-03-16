@@ -120,7 +120,7 @@ it('Cypress Command Chains', () => {
 
 })
 
-it.only('Reusing Locators', () => {
+it('Reusing Locators', () => {
     //when you have a locator that you want to reuse, you can use the .as() command to give it an alias and then use the alias to reference the locator in other commands
 
     // const inputEmail = cy.get('#inputEmail1')
@@ -182,5 +182,42 @@ it.only('Reusing Locators', () => {
     })
 
     cy.get('@inputEmail2').click()
+
+})
+
+it.only('Extracting Values from Page', () => {
+
+    //Using JQuery metho
+    cy.get('[for="exampleInputEmail1"]').then(label => {
+        const emailLabel = label.text()
+        console.log(emailLabel)
+    })
+
+    //Using Invoke command
+    //invoke command is a cypress command that allows you to invoke a jQuery method on the element and return the result to the next command
+    cy.get('[for="exampleInputEmail1"]').invoke('text').then(emailLabel => {
+        console.log(emailLabel)
+    })
+    cy.get('[for="exampleInputEmail1"]').invoke('text').as('emailLabel') //give the result an alias to use in other commands
+
+    //Invoke attribute values
+    cy.get('#exampleInputEmail1').invoke('attr', 'class').then(classValue => {
+        console.log(classValue)
+    })
+
+    //if you just need to test an assertion, you do not need to invoke
+    //invoke only needed when you need to extract the value and use it in another command or assertion, but if you just need to test the value, you can use should() command with the appropriate assertion without needing to invoke the value first
+    //don't need to use it for assertion/validation
+
+    cy.get('[for="exampleInputEmail1"]').should('contain', 'Email address') //can directly assert the text without needing to invoke it first
+
+    cy.get('#exampleInputEmail1').should('have.attr', 'class', 'input-full-width size-medium status-basic shape-rectangle nb-transition') //can directly assert the attribute value without needing to invoke it first
+
+    //Invoke input field values
+    cy.get('#exampleInputEmail1').type('helo@test.com')
+    cy.get('#exampleInputEmail1').invoke('prop', 'value').then(inputValue => {
+        //To find prop, in the console, look for Properties and find the value property to get the current value of the input field (can be read only or read/write)
+        console.log(inputValue)
+    })
 
 })
