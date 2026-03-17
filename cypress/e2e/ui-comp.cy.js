@@ -57,5 +57,18 @@ it('radio buttons', () => {
     cy.contains('nb-card', 'Using the Grid').contains('label','Option 1').find('input').check({force: true})
 
     //From the Cypress docs, use check for radio buttons and checkboxes, and click for everything else
+})
+
+it('checkboxes', () => {
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Toastr').click()
+
+    //if you want checkboxes to be checked, use .check() method, if you want them to be unchecked, use .uncheck() method
+    //click will not work for checkboxes because they are hidden
+    cy.get('[type="checkbox"]').click({force: true, multiple: true})
+
+    cy.get('[type="checkbox"]').check({force: true})
+    cy.get('[type="checkbox"]').eq(0).uncheck({force: true}).should('not.be.checked')
+    cy.get('[type="checkbox"]').should('be.checked')
 
 })
