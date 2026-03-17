@@ -5,7 +5,7 @@ beforeEach('Open test applicantion', () => {
 
 })
 
-it.only('input fields', () => {
+it('input fields', () => {
     cy.contains('Forms').click()
     cy.contains('Form Layouts').click()
     
@@ -25,7 +25,7 @@ it.only('input fields', () => {
 
     //expect input field would not be empty
     cy.get('#inputEmail1').should('not.have.value', '').clear().type('test@test.com')
-        .press(Cypress.Keyboard.Keys.TAB)d
+        .press(Cypress.Keyboard.Keys.TAB)
 
     cy.contains('Auth').click()
     cy.contains('Login').click()
@@ -36,4 +36,26 @@ it.only('input fields', () => {
     //you can also use Shift and Alt if you needed it, for example to type in capital letters
     //tab does not work in cypress, you need to use .press() method
     //if you want to reuse fields, use .invoke('prop', 'value', '')
+})
+
+it('radio buttons', () => {
+    cy.contains('Forms').click()
+    cy.contains('Form Layouts').click()
+    
+    cy.contains('nb-card', 'Using the Grid').find('[type="radio"]').then(allRadioButtons => { 
+        cy.wrap(allRadioButtons).eq(0).check({force: true}).should('be.checked')
+        //you need the check(force:true) because the radio button is hidden, and cypress cannot click on it, so you need to force it to click
+        //don't use force:true for everything, only when you need to, because it can cause problems with your tests if you use it too much
+        
+        //These use indexes for the radio buttons
+        cy.wrap(allRadioButtons).eq(1).check({force: true})
+        cy.wrap(allRadioButtons).eq(0).should('not.be.checked')
+        cy.wrap(allRadioButtons).eq(2).should('be.disabled')
+    })
+
+    //If you wanted to use labels instead of indexes, you can do it like this:
+    cy.contains('nb-card', 'Using the Grid').contains('label','Option 1').find('input').check({force: true})
+
+    //From the Cypress docs, use check for radio buttons and checkboxes, and click for everything else
+
 })
