@@ -138,7 +138,7 @@ it('dialog boxes', () => {
 
 })
 
-it.only('web tables', () => {
+it('web tables', () => {
     //table starts with the <table> tag
     //<tbody> is table body
     //<tr> is table rows
@@ -198,3 +198,52 @@ it.only('web tables', () => {
     // })
 })
 
+it.only('datepickers', () => {
+    //Datepicker consists of invidiual cells with rows and boundaries
+    
+    cy.contains('Forms').click()
+    cy.contains('Datepicker').click()
+
+    let date = new Date() //gets current date
+    date.setDate(date.getDate())
+    let futureDay = date.getDate()
+    let futureMonthLong = date.toLocaleDateString('en-US', { month: 'long'})
+    let futureMonthShort = date.toLocaleDateString('en-US', { month: 'short'})
+    let futureYear = date.getFullYear()
+    let dateToAssert = `${futureMonthShort} ${futureDay}, ${futureYear}`
+
+    cy.get('[placeholder="Form Picker"]').then(input => {
+
+        //cy.get('.day-cell').not('.bounding-month').contains('12').click()
+        //cy.wrap(input).should('have.value', 'Mar 12, 2026') //however this is hardcorded and depends on the current month
+
+        cy.wrap(input).click()
+
+        // cy.get('nb-calendar-view-mode').invoke('text').then(calendarMonthAndYear => {
+        //     if(!calendarMonthAndYear.includes(futureMonthLong) || !calendarMonthAndYear.includes(futureYear)){
+        //         cy.get('[data-name="chevron-right"]').click()
+        //     }
+        // })
+
+        //The problem was that the code only clicked the "next month" chevron once, but going from March 24 + 50 days = May 13 requires navigating through two months (March → April → May).
+        // The new recursive selectMonthAndYear() function will keep clicking the chevron until it reaches the correct month and year, no matter how many months ahead the target date is.
+        // Now the test should pass with the expected value of "May 13, 2026" instead of stopping at April.
+
+        //Recursive Function
+        function selectMonthAndYear() {
+            cy.get('nb-calendar-view-mode').invoke('text').then(calendarMonthAndYear => {
+                if(!calendarMonthAndYear.includes(futureMonthLong) || !calendarMonthAndYear.includes(futureYear)){
+                    cy.get('[data-name="chevron-right"]').click()
+                    selectMonthAndYear()
+                }
+            })
+        }
+
+        selectMonthAndYear()
+
+        cy.get('.day-cell').not('.bounding-month').contains(futureDay).click()
+        cy.wrap(input).should('have.value', dateToAssert)
+
+    })
+
+})
