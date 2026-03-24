@@ -99,3 +99,18 @@ it('lists and dropdowns', () => {
     })
 })
 
+it.only('tooltips', () => {
+    //difficult to inspect tooltip since it disappears
+    //use button tag
+
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Tooltip').click()
+    cy.contains('button', 'Top').trigger('mouseenter')
+    //no hover methods; but there are trigger
+    //Event Listeners > Click, MouseEnter event
+    cy.get('nb-tooltip').should('have.text', 'This is a tooltip')
+
+    //Cypress freezes in the DOM and that is how you can explore the tooltip to find the right locator
+
+})
+
