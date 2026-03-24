@@ -72,3 +72,30 @@ it('checkboxes', () => {
     cy.get('[type="checkbox"]').should('be.checked')
 
 })
+
+it('lists and dropdowns', () => {
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Toastr').click()
+
+    //dropdowns may be seperate from the main dropdown element, so you need to click on the dropdown to open it, and then click on the option you want
+
+    cy.contains('div', 'Toast type:').find('select').select('info').should('have.value', 'info')
+
+    cy.contains('div', 'Position').find('nb-select').click()
+    cy.get('.option-list').contains('bottom-right').click()
+    cy.contains('div', 'Position').find('nb-select').should('have.text', 'bottom-right')
+
+    cy.contains('div', 'Position:').find('nb-select').then(dropdown => {
+        cy.wrap(dropdown).click()
+        cy.get('.option-list nb-option').each((option, index, list) => {
+            cy.wrap(option).click()
+            //errors out since after selecting from dropdown, it collapses/closes
+            //the loop is trying to select another item but it doesn't see it (DOM no longer attached)
+            //so you have to open drodown again - stay expanded
+            if(index < list.length-1) 
+                cy.wrap(dropdown).click()
+        })
+
+    })
+})
+
