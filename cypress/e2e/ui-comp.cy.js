@@ -99,7 +99,7 @@ it('lists and dropdowns', () => {
     })
 })
 
-it.only('tooltips', () => {
+it('tooltips', () => {
     //difficult to inspect tooltip since it disappears
     //use button tag
 
@@ -111,6 +111,30 @@ it.only('tooltips', () => {
     cy.get('nb-tooltip').should('have.text', 'This is a tooltip')
 
     //Cypress freezes in the DOM and that is how you can explore the tooltip to find the right locator
+})
+
+it.only('dialog boxes', () => {
+    //Can't inspect on browser dialoge boxes
+
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+    cy.get('.nb-trash').first().click() //first row deleted (by default, cypress accepts the dialogue box option to YES)
+
+    //cy.on
+    cy.get('.nb-trash').first().click()
+    cy.on('window:confirm', confirm => {
+        expect(confirm).to_equal('Are you sure you want to delete?')
+    })
+
+    //only works if the window is fired
+
+    cy.window().then( win => {
+        cy.stub(win, 'confirm').as('dialogueBox').returns(true) //replace with our own funtion
+    })
+
+    cy.get('.nb-trash').first().click()
+    cy.get('@dialogueBox').should('be.calledWith', 'Are you sure you want to delete?')
 
 })
 
