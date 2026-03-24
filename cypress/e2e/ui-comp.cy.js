@@ -113,7 +113,7 @@ it('tooltips', () => {
     //Cypress freezes in the DOM and that is how you can explore the tooltip to find the right locator
 })
 
-it.only('dialog boxes', () => {
+it('dialog boxes', () => {
     //Can't inspect on browser dialoge boxes
 
     cy.contains('Tables & Data').click()
@@ -136,5 +136,65 @@ it.only('dialog boxes', () => {
     cy.get('.nb-trash').first().click()
     cy.get('@dialogueBox').should('be.calledWith', 'Are you sure you want to delete?')
 
+})
+
+it.only('web tables', () => {
+    //table starts with the <table> tag
+    //<tbody> is table body
+    //<tr> is table rows
+
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+    //How to find by text
+    cy.get('tbody').contains('tr', 'Larry').then( tableRow => {
+         //now you can do whatever you want in the Row
+         //use this when you have unique identifiers
+        cy.wrap(tableRow).find('.nb-edit').click()
+        cy.wrap(tableRow).find('[placeholder="Age"]').clear().type('35')
+        cy.wrap(tableRow).find('.nb-checkmark').click()
+        cy.wrap(tableRow).find('td').last().should('have.text', '35')
+    })
+
+    //How to find by index
+    cy.get('.nb-plus').click() 
+    cy.get('thead tr').eq(2).then(tableRow => {
+        //Use this when you don't have unique identifiers
+        //Create a new record so you can use this new Row to test
+        cy.wrap(tableRow).find('[placeholder="First Name"]').type('MoMo')
+        cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Chicken')
+        cy.wrap(tableRow).find('.nb-checkmark').click()
+    })
+
+    cy.get('tbody tr').first().find('td').then(tableColumns => {
+        //now we can use index to refer to the newly created row from above to test
+        //example validates MoMo Chicken was added to the table
+        cy.wrap(tableColumns).eq(2).should('have.text', 'MoMo')
+        cy.wrap(tableColumns).eq(3).should('have.text', 'Chicken')
+    })
+
+    //Looping through rows - Helpful when testing Filters
+
+    const ages = [20, 30, 40, 200]
+    
+    cy.wrap(ages).each( age => {
+        cy.get('[placeholder="Age"]').clear().type(age)
+        cy.wait(500)
+        
+        cy.get('tbody tr').each( tableRows => {
+            if(age > 101){
+                cy.wrap(tableRows).should('contain.text', 'No data found')
+            } else {
+                cy.wrap(tableRows).find('td').last().should('have.text', age)
+            }
+        })  
+    })
+   
+    // cy.get('[placeholder="Age"]').type(20)
+    // cy.wait(500) //sometimes when you filter, there's a slight delay so this helps adjust for that change
+    // //usually try to avoid it but if nothing else works, this is a last resort
+    // cy.get('tbody tr').each( tableRows => {
+    //     cy.wrap(tableRows).find('td').last().should('have.text', 20)
+    // })
 })
 
